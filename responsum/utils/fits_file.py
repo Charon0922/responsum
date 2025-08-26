@@ -1,7 +1,15 @@
 from astropy.io import fits
 import numpy as np
 import astropy.units as u
-import pkg_resources
+# Prefer importlib.metadata (py3.8+) or its backport; fall back to pkg_resources only if necessary.
+try:
+    from importlib.metadata import version as _pkg_version, PackageNotFoundError
+except Exception:
+    try:
+        from importlib_metadata import version as _pkg_version, PackageNotFoundError  # backport
+    except Exception:
+        _pkg_version = None
+        PackageNotFoundError = Exception
 
 # NOTE: Much of this code comes from 3ML developed by Giacomo Vianello and myself ( J. Michael Burgess)
 
@@ -238,9 +246,23 @@ class FITSExtension(object):
         # update the header to indicate that the file was created by Responsum
 
         if creator is None:
-            creator = "RESPONSUM v.%s" % (
-                pkg_resources.get_distribution("responsum").version
-            )
+            creator = "RESPONSUM"
+            # try importlib.metadata first
+            if _pkg_version is not None:
+                try:
+                    creator_ver = _pkg_version("responsum")
+                    creator = f"RESPONSUM v.{creator_ver}"
+                except PackageNotFoundError:
+                    pass
+                except Exception:
+                    pass
+            else:
+                # final fallback: try pkg_resources if available (avoid importing it at module import time)
+                try:
+                    import pkg_resources as _pkg_res  # noqa: WPS433 (local import fallback)
+                    creator = f"RESPONSUM v.{_pkg_res.get_distribution('responsum').version}"
+                except Exception:
+                    pass
 
         self._hdu.header.set("CREATOR", creator, "(J. Burgess, jburgess@mpe.mpg.de)")
 

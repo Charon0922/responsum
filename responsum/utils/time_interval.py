@@ -2,6 +2,7 @@ import collections
 import copy
 import re
 from operator import attrgetter, itemgetter
+from typing import Tuple
 
 import numpy as np
 
@@ -213,12 +214,12 @@ class IntervalSet(object):
         return cls(list_of_intervals)
 
     @staticmethod
-    def _parse_interval(time_interval):
+    def _parse_interval(time_interval) -> Tuple[float, float]:
         # The following regular expression matches any two numbers, positive or negative,
         # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
 
         tokens = re.match(
-            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)", time_interval
+            r"(-?\+?[0-9]+\.?[0-9]*)\s*-\s*(-?\+?[0-9]+\.?[0-9]*)", time_interval
         ).groups()
 
         return [float(x) for x in tokens]
