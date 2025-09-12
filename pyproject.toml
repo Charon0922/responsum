@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "versioneer[toml]"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "responsum"
+description = "A generic dispersion response library"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=2.7.0"
+license = {text = "GPL3"}
+authors = [
+    {name = "J. Michael Burgess", email = "jmichaelburgess@gmail.com"}
+]
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "astropy",
+    "scipy",
+    "h5py",
+]
+
+[project.urls]
+Homepage = "https://github.com/grburgess/responsum"
+"Bug Tracker" = "https://github.com/grburgess/responsum/issues"
+"Source Code" = "https://github.com/grburgess/responsum"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-codecov",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "responsum/_version.py"
+versionfile_build = "responsum/_version.py"
+tag_prefix = "v"
+parentdir_prefix = "responsum-"
